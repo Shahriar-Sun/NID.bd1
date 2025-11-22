@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Identity Wing - Govt NID Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        body.font-bengali { font-family: 'Hind Siliguri', sans-serif; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.5s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.5s ease-out forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { 
+            background: #16a34a; 
+            border-radius: 5px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #15803d; }
+
+        .progress-bar {
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-modern {
+            transition: all 0.3s ease;
+        }
+        .input-modern:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(22, 163, 74, 0.15);
+        }
+
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn-ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        .step-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+        .step-line-progress {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #16a34a 0%, #059669 100%);
+            z-index: 1;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notification-badge {
+            animation: pulse-soft 2s ease-in-out infinite;
+        }
+
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-3d:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .hero-pattern {
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.15) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .status-pulse {
+            position: relative;
+        }
+        .status-pulse::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: inherit;
+            animation: pulse-soft 2s ease-in-out infinite;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="text-slate-800 selection:bg-green-200 flex flex-col min-h-screen">
+
+    <nav class="glass sticky top-0 z-50 border-b border-white/50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="navigate('home')">
+                    <div class="relative">
+                        <svg class="w-12 h-12 group-hover:scale-110 transition-all duration-300" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 5 L85 20 L85 45 Q85 70 50 95 Q15 70 15 45 L15 20 Z" fill="url(#gradient1)" stroke="#fff" stroke-width="2"/>
+                            <circle cx="50" cy="45" r="18" fill="#fff" opacity="0.9"/>
+                            <circle cx="50" cy="45" r="12" fill="#DC2626"/>
+                            <path d="M50 35 L50 45 L58 45" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                            <defs>
+                                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#16a34a;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-xl leading-none tracking-tight text-slate-900 group-hover:text-green-700 transition-colors">Govt NID</h1>
+                        <p class="text-[10px] text-slate-500 tracking-[0.2em] uppercase font-semibold">Smart Portal</p>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center gap-2 text-sm font-semibold" id="desktop-nav"></div>
+
+                <button class="md:hidden p-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/50 animate-slide-down shadow-lg"></div>
+    </nav>
+
+    <main id="app-root" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow"></main>
+
+    <footer class="glass border-t border-white/50 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left flex items-center gap-4">
+                    <svg class="w-10 h-10 opacity-60" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 5 L85 20 L85 45 Q85 70 50 95 Q15 70 15 45 L15 20 Z" fill="url(#footerGradient)" stroke="#64748b" stroke-width="2"/>
+                        <circle cx="50" cy="45" r="18" fill="#fff" opacity="0.7"/>
+                        <circle cx="50" cy="45" r="12" fill="#DC2626"/>
+                        <defs>
+                            <linearGradient id="footerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#16a34a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div>
+                        <p class="text-sm text-slate-600 font-medium" id="footer-text"></p>
+                        <p class="text-xs text-slate-400 mt-1">Powered by Digital Bangladesh Initiative</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-6 text-sm">
+                    <a href="#" class="text-slate-600 hover:text-green-600 transition-colors font-medium flex items-center gap-2">
+                        <i data-lucide="shield" class="w-4 h-4"></i> Privacy
+                    </a>
+                    <a href="#" class="text-slate-600 hover:text-green-600 transition-colors font-medium flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Terms
+                    </a>
+                    <a href="#" class="text-slate-600 hover:text-green-600 transition-colors font-medium flex items-center gap-2">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Help
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container" class="fixed bottom-8 right-8 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        const state = {
+            view: 'home',
+            lang: 'en',
+            isMenuOpen: false,
+            applyStep: 1,
+            isSubmitting: false,
+            statusAppId: '',
+            isTracking: false,
+            statusResult: null,
+            isVerifying: false,
+            verifyResult: null,
+            isSendingOtp: false,
+            otpSent: false
+        };
+
+        const TRANSLATIONS = {
+            en: {
+                nav_home: "Home", nav_apply: "Apply Now", nav_status: "Check Status",
+                nav_download: "Download NID", nav_verify: "Verify NID",
+                hero_title: "National Identity Wing",
+                hero_subtitle: "Secure, Fast, and Digital Identity Services for All Citizens",
+                hero_desc: "Get your National ID card digitally with our streamlined online application process. Fast, secure, and paperless.",
+                btn_start: "Start Application", btn_learn: "Learn More",
+                step_personal: "Personal Info", step_parents: "Parental Info",
+                step_address: "Address", step_upload: "Documents",
+                lbl_name: "Full Name", lbl_dob: "Date of Birth", lbl_nid: "NID Number",
+                lbl_app_id: "Application ID", btn_next: "Next Step", btn_prev: "Previous",
+                btn_submit: "Submit Application", status_title: "Track Your Application",
+                status_desc: "Enter your Application ID and Date of Birth to check the current status of your NID application.",
+                download_title: "Download Digital NID", verify_title: "Verify Identity",
+                verify_desc: "For authorized personnel only. Verify the authenticity of a National ID card.",
+                footer_text: "© 2025 National Identity Wing. All rights reserved.",
+                feature_secure: "Bank-Level Security", feature_secure_desc: "Your data is encrypted and protected",
+                feature_fast: "Lightning Fast", feature_fast_desc: "Get your NID in just 7 days",
+                feature_support: "24/7 Support", feature_support_desc: "We're here to help anytime"
+            },
+            bn: {
+                nav_home: "হোম", nav_apply: "আবেদন করুন", nav_status: "অবস্থান জানুন",
+                nav_download: "এনআইডি ডাউনলোড", nav_verify: "যাচাইকরণ",
+                hero_title: "জাতীয় পরিচয়পত্র অনুবিভাগ",
+                hero_subtitle: "সকল নাগরিকের জন্য নিরাপদ, দ্রুত এবং ডিজিটাল পরিচয় সেবা",
+                hero_desc: "আমাদের সহজ অনলাইন আবেদন প্রক্রিয়ার মাধ্যমে আপনার জাতীয় পরিচয়পত্র ডিজিটালভাবে পান। দ্রুত, নিরাপদ এবং কাগজবিহীন।",
+                btn_start: "আবেদন শুরু করুন", btn_learn: "আরও জানুন",
+                step_personal: "ব্যক্তিগত তথ্য", step_parents: "পিতামাতার তথ্য",
+                step_address: "ঠিকানা", step_upload: "কাগজপত্র",
+                lbl_name: "পূর্ণ নাম", lbl_dob: "জন্ম তারিখ", lbl_nid: "এনআইডি নম্বর",
+                lbl_app_id: "আবেদন আইডি", btn_next: "পরবর্তী", btn_prev: "পূর্ববর্তী",
+                btn_submit: "জমা দিন", status_title: "আবেদন ট্র্যাক করুন",
+                status_desc: "আপনার আবেদনের বর্তমান অবস্থা জানতে আইডি এবং জন্ম তারিখ দিন।",
+                download_title: "ডিজিটাল এনআইডি ডাউনলোড", verify_title: "পরিচয় যাচাই",
+                verify_desc: "শুধুমাত্র অনুমোদিত কর্মীদের জন্য। জাতীয় পরিচয়পত্রের সত্যতা যাচাই করুন।",
+                footer_text: "© ২০২৫ জাতীয় পরিচয়পত্র অনুবিভাগ। সর্বস্বত্ব সংরক্ষিত।",
+                feature_secure: "ব্যাংক-স্তরের নিরাপত্তা", feature_secure_desc: "আপনার তথ্য এনক্রিপ্ট এবং সুরক্ষিত",
+                feature_fast: "বজ্র দ্রুত", feature_fast_desc: "মাত্র ৭ দিনে আপনার এনআইডি পান",
+                feature_support: "২৪/৭ সহায়তা", feature_support_desc: "আমরা সর্বদা সাহায্য করতে এখানে আছি"
+            }
+        };
+
+        function getT() { return TRANSLATIONS[state.lang]; }
+
+        function simulateApiCall(ms = 1500) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-gradient-to-r from-green-600 to-emerald-600' : 'bg-gradient-to-r from-red-600 to-rose-600';
+            const icon = type === 'success' ? 'check-circle' : 'x-circle';
+            
+            toast.className = `${bgClass} text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-slide-up pointer-events-auto backdrop-blur-sm border border-white/20`;
+            toast.innerHTML = `
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <i data-lucide="${icon}" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-base">${msg}</span>
+            `;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        function navigate(view) {
+            state.view = view;
+            state.isMenuOpen = false;
+            
+            if (view !== 'apply') state.applyStep = 1;
+            if (view !== 'status') { state.statusResult = null; state.statusAppId = ''; }
+            if (view !== 'verify') state.verifyResult = null;
+            if (view !== 'download') state.otpSent = false;
+
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'bn' : 'en';
+            document.body.className = state.lang === 'bn' 
+                ? "font-bengali text-slate-800 flex flex-col min-h-screen" 
+                : "text-slate-800 flex flex-col min-h-screen";
+            render();
+        }
+
+        function toggleMobileMenu() {
+            state.isMenuOpen = !state.isMenuOpen;
+            renderNav();
+        }
+
+        function changeStep(delta) {
+            state.applyStep = Math.max(1, Math.min(4, state.applyStep + delta));
+            render();
+        }
+
+        async function submitApplication() {
+            state.isSubmitting = true;
+            render();
+            await simulateApiCall(2000);
+            state.isSubmitting = false;
+            const appId = `2025-NID-${Math.floor(Math.random()*10000)}`;
+            showToast(`Application Submitted Successfully! ID: ${appId}`, 'success');
+            state.applyStep = 1;
+            navigate('status');
+        }
+
+        async function checkStatus() {
+            const id = document.getElementById('status-input').value;
+            if (!id) return showToast("Please enter Application ID", "error");
+            
+            state.statusAppId = id;
+            state.isTracking = true;
+            render();
+            
+            await simulateApiCall(1800);
+            
+            state.isTracking = false;
+            state.statusResult = (id === '123') ? 'rejected' : 'processing';
+            render();
+        }
+
+        async function verifyIdentity() {
+            state.isVerifying = true;
+            state.verifyResult = null;
+            render();
+
+            await simulateApiCall(1800);
+            
+            state.isVerifying = false;
+            const isSuccess = Math.random() > 0.3;
+            
+            if (isSuccess) {
+                state.verifyResult = {
+                    status: true,
+                    name: "Abdur Rahman",
+                    nid: "8829100239",
+                    dob: "1990-05-15"
+                };
+                showToast("Identity Verified Successfully", "success");
+            } else {
+                state.verifyResult = { status: false };
+                showToast("Record Not Found in Database", "error");
+            }
+            render();
+        }
+
+        async function sendOtp() {
+            state.isSendingOtp = true;
+            render();
+            await simulateApiCall(1200);
+            state.isSendingOtp = false;
+            state.otpSent = true;
+            showToast("OTP sent to +88017...432", "success");
+            render();
+        }
+
+        function verifyOtp() {
+            const otp = document.getElementById('otp-input').value;
+            if(otp === '123456') {
+                showToast("Verified! Downloading your Digital NID...", "success");
+                setTimeout(() => {
+                    showToast("Download Complete! Check your Downloads folder.", "success");
+                }, 1500);
+            } else {
+                showToast("Invalid OTP. Demo OTP: 123456", "error");
+            }
+        }
+
+        function renderNav() {
+            const t = getT();
+            const navItems = [
+                { id: 'home', label: t.nav_home, icon: 'home' },
+                { id: 'apply', label: t.nav_apply, icon: 'file-plus' },
+                { id: 'status', label: t.nav_status, icon: 'search' },
+                { id: 'download', label: t.nav_download, icon: 'download' },
+                { id: 'verify', label: t.nav_verify, icon: 'shield-check' }
+            ];
+
+            const desktopHTML = `
+                ${navItems.slice(0, 4).map(item => `
+                    <button onclick="navigate('${item.id}')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all ${state.view === item.id ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'text-slate-600 hover:bg-slate-100'}">
+                        <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+                        <span>${item.label}</span>
+                    </button>
+                `).join('')}
+                <div class="h-8 w-px bg-slate-200 mx-2"></div>
+                <button onclick="toggleLang()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all font-semibold text-slate-700">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span class="text-sm">${state.lang === 'en' ? 'EN' : 'বাং'}</span>
+                </button>
+            `;
+            document.getElementById('desktop-nav').innerHTML = desktopHTML;
+
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (state.isMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.innerHTML = `
+                    <div class="p-4 space-y-2">
+                        ${navItems.map(item => `
+                            <button onclick="navigate('${item.id}')" class="flex items-center gap-3 w-full text-left py-3 px-4 rounded-xl font-semibold transition-all ${state.view === item.id ? 'bg-green-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">
+                                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                                <span>${item.label}</span>
+                            </button>
+                        `).join('')}
+                        <div class="pt-4 border-t border-slate-200">
+                            <button onclick="toggleLang()" class="flex items-center gap-3 w-full py-3 px-4 text-slate-600 hover:bg-slate-100 rounded-xl font-medium">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                                <span>Switch to ${state.lang === 'en' ? 'বাংলা' : 'English'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+            
+            document.getElementById('footer-text').innerText = t.footer_text;
+            lucide.createIcons();
+        }
+
+        function renderHome() {
+            const t = getT();
+            return `
+                <div class="animate-fade-in space-y-16">
+                    <section class="relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-[3rem] hero-pattern"></div>
+                        <div class="absolute top-0 right-0 w-96 h-96 bg-green-200 rounded-full blur-3xl opacity-20 animate-float"></div>
+                        <div class="absolute bottom-0 left-0 w-96 h-96 bg-emerald-200 rounded-full blur-3xl opacity-20 animate-float" style="animation-delay: 1s;"></div>
+                        
+                        <svg class="absolute top-10 right-10 w-64 h-64 opacity-5" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 5 L85 20 L85 45 Q85 70 50 95 Q15 70 15 45 L15 20 Z" fill="currentColor"/>
+                        </svg>
+                        
+                        <div class="relative z-10 px-6 sm:px-12 py-20 lg:py-28">
+                            <div class="max-w-4xl mx-auto text-center">
+                                <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg mb-8 border border-green-100">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                    <span class="text-sm font-bold text-green-700">Now Live • Beta Version</span>
+                                </div>
+                                
+                                <h1 class="text-5xl lg:text-7xl font-black mb-6 leading-tight">
+                                    <span class="gradient-text">${t.hero_title}</span>
+                                </h1>
+                                
+                                <p class="text-xl lg:text-2xl text-slate-600 mb-6 font-medium">${t.hero_subtitle}</p>
+                                <p class="text-base text-slate-500 mb-10 max-w-2xl mx-auto">${t.hero_desc}</p>
+                                
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                    <button onclick="navigate('apply')" class="btn-ripple group bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-green-200 hover:shadow-2xl hover:shadow-green-300 transition-all hover:-translate-y-1 flex items-center gap-3">
+                                        <i data-lucide="rocket" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
+                                        <span>${t.btn_start}</span>
+                                        <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                                    </button>
+                                    
+                                    <button onclick="navigate('status')" class="btn-ripple group glass px-8 py-4 rounded-2xl font-bold text-lg text-slate-700 hover:bg-white transition-all flex items-center gap-3 shadow-lg">
+                                        <i data-lucide="search" class="w-6 h-6"></i>
+                                        <span>${t.btn_learn}</span>
+                                    </button>
+                                </div>
+
+                                <div class="mt-16 grid grid-cols-3 gap-8">
+                                    ${[
+                                        { num: '2.5M+', label: 'Active Users', icon: 'users' },
+                                        { num: '99.9%', label: 'Uptime', icon: 'activity' },
+                                        { num: '24/7', label: 'Support', icon: 'headphones' }
+                                    ].map(stat => `
+                                        <div class="text-center">
+                                            <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-2xl mb-3">
+                                                <i data-lucide="${stat.icon}" class="w-6 h-6 text-green-600"></i>
+                                            </div>
+                                            <div class="text-2xl lg:text-3xl font-black text-slate-800">${stat.num}</div>
+                                            <div class="text-sm text-slate-500 font-medium mt-1">${stat.label}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        ${[
+                            { 
+                                icon: 'search', 
+                                title: t.nav_status, 
+                                desc: 'Track real-time progress of your application',
+                                color: 'blue',
+                                gradient: 'from-blue-500 to-cyan-500',
+                                bg: 'bg-blue-50',
+                                action: 'status'
+                            },
+                            { 
+                                icon: 'download', 
+                                title: t.nav_download, 
+                                desc: 'Download your Digital NID instantly',
+                                color: 'purple',
+                                gradient: 'from-purple-500 to-pink-500',
+                                bg: 'bg-purple-50',
+                                action: 'download'
+                            },
+                            { 
+                                icon: 'shield-check', 
+                                title: t.nav_verify, 
+                                desc: 'Verify NID authenticity securely',
+                                color: 'amber',
+                                gradient: 'from-amber-500 to-orange-500',
+                                bg: 'bg-amber-50',
+                                action: 'verify'
+                            }
+                        ].map(feature => `
+                            <div onclick="navigate('${feature.action}')" class="card-hover card-3d glass rounded-3xl p-8 cursor-pointer group border border-white/50 shadow-lg hover:shadow-2xl">
+                                <div class="relative mb-6">
+                                    <div class="absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-2xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                                    <div class="relative w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                        <i data-lucide="${feature.icon}" class="w-8 h-8"></i>
+                                    </div>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold text-slate-800 mb-3 group-hover:text-green-700 transition-colors">${feature.title}</h3>
+                                <p class="text-slate-600 leading-relaxed mb-4">${feature.desc}</p>
+                                
+                                <div class="flex items-center gap-2 text-green-600 font-semibold group-hover:gap-4 transition-all">
+                                    <span>Get Started</span>
+                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </section>
+
+                    <section class="glass rounded-3xl p-8 lg:p-12 border border-white/50 shadow-lg">
+                        <div class="text-center mb-12">
+                            <h2 class="text-4xl font-black text-slate-800 mb-4">Why Choose Digital NID?</h2>
+                            <p class="text-lg text-slate-600">Experience the future of identity verification</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            ${[
+                                { icon: 'shield', title: t.feature_secure, desc: t.feature_secure_desc, color: 'text-green-600 bg-green-50' },
+                                { icon: 'zap', title: t.feature_fast, desc: t.feature_fast_desc, color: 'text-yellow-600 bg-yellow-50' },
+                                { icon: 'headphones', title: t.feature_support, desc: t.feature_support_desc, color: 'text-blue-600 bg-blue-50' }
+                            ].map(benefit => `
+                                <div class="text-center group">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 ${benefit.color} rounded-3xl mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                                        <i data-lucide="${benefit.icon}" class="w-10 h-10"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">${benefit.title}</h3>
+                                    <p class="text-slate-600">${benefit.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </section>
+
+                    <section class="relative overflow-hidden rounded-3xl">
+                        <div class="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-black"></div>
+                        <div class="absolute inset-0 hero-pattern opacity-10"></div>
+                        
+                        <div class="relative z-10 text-center py-16 px-6">
+                            <h2 class="text-4xl font-black text-white mb-4">Ready to Get Started?</h2>
+                            <p class="text-xl text-slate-300 mb-8">Join millions of citizens using Digital NID</p>
+                            
+                            <button onclick="navigate('apply')" class="btn-ripple bg-white text-slate-900 px-10 py-5 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-white/20 transition-all hover:scale-105 inline-flex items-center gap-3">
+                                <span>Apply for NID Now</span>
+                                <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderApply() {
+            const t = getT();
+            const steps = [t.step_personal, t.step_parents, t.step_address, t.step_upload];
+            const progressWidth = ((state.applyStep - 1) / (steps.length - 1)) * 100;
+
+            let formContent = '';
+            if (state.applyStep === 1) {
+                formContent = `
+                    <div class="space-y-6 animate-scale-in">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <i data-lucide="user" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-800">${t.step_personal}</h3>
+                                <p class="text-sm text-slate-500">Tell us about yourself</p>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_name} (English)</label>
+                                <div class="relative">
+                                    <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    <input type="text" class="input-modern w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 outline-none font-medium" placeholder="e.g. Abdur Rahman">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Name (Bangla)</label>
+                                <div class="relative">
+                                    <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    <input type="text" class="input-modern w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 outline-none font-medium" placeholder="e.g. আবদুর রহমান">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_dob}</label>
+                                <div class="relative">
+                                    <i data-lucide="calendar" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    <input type="date" class="input-modern w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 outline-none font-medium">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Blood Group</label>
+                                <div class="relative">
+                                    <i data-lucide="droplet" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    <select class="input-modern w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 outline-none font-medium appearance-none">
+                                        <option>Select Blood Group</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Gender</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    ${['Male', 'Female', 'Other'].map(gender => `
+                                        <label class="relative cursor-pointer">
+                                            <input type="radio" name="gender" class="peer sr-only">
+                                            <div class="px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-center font-semibold text-slate-600 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 transition-all hover:bg-slate-100">
+                                                ${gender}
+                                            </div>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Mobile Number</label>
+                                <div class="relative">
+                                    <i data-lucide="phone" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    <input type="tel" class="input-modern w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-green-500 outline-none font-medium" placeholder="+880 1XXX-XXXXXX">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (state.applyStep === 2) {
+                formContent = `
+                    <div class="space-y-6 animate-scale-in">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-800">${t.step_parents}</h3>
+                                <p class="text-sm text-slate-500">Parent information required</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="glass rounded-2xl p-6 border border-blue-100">
+                                <h4 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                                    <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                                    Father's Information
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Father's Name (English)</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="Full name">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Father's Name (Bangla)</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="পূর্ণ নাম">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Father's NID</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="10 or 17 digits">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass rounded-2xl p-6 border border-pink-100">
+                                <h4 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                                    <i data-lucide="user" class="w-5 h-5 text-pink-600"></i>
+                                    Mother's Information
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Mother's Name (English)</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-pink-500 outline-none" placeholder="Full name">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Mother's Name (Bangla)</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-pink-500 outline-none" placeholder="পূর্ণ নাম">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Mother's NID</label>
+                                        <input type="text" class="input-modern w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-pink-500 outline-none" placeholder="10 or 17 digits">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (state.applyStep === 3) {
+                formContent = `
+                    <div class="space-y-6 animate-scale-in">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <i data-lucide="map-pin" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-800">${t.step_address}</h3>
+                                <p class="text-sm text-slate-500">Where do you live?</p>
+                            </div>
+                        </div>
+
+                        <div class="glass rounded-2xl p-4 border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 accent-green-600 rounded">
+                                <span class="font-semibold text-amber-900 flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                                    Present address same as permanent address
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Division</label>
+                                <select class="input-modern w-full px-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none appearance-none">
+                                    <option>Select Division</option>
+                                    <option>Dhaka</option>
+                                    <option>Chittagong</option>
+                                    <option>Rajshahi</option>
+                                    <option>Khulna</option>
+                                    <option>Barisal</option>
+                                    <option>Sylhet</option>
+                                    <option>Rangpur</option>
+                                    <option>Mymensingh</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">District</label>
+                                <select class="input-modern w-full px-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none appearance-none">
+                                    <option>Select District</option>
+                                    <option>Dhaka</option>
+                                    <option>Gazipur</option>
+                                    <option>Narayanganj</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Upazila/Thana</label>
+                                <input type="text" class="input-modern w-full px-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none" placeholder="Enter upazila">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Post Office</label>
+                                <input type="text" class="input-modern w-full px-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none" placeholder="Post office name">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Village/Road/Area</label>
+                                <textarea class="input-modern w-full px-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none resize-none" rows="3" placeholder="Enter detailed address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                formContent = `
+                    <div class="space-y-6 animate-scale-in">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <i data-lucide="paperclip" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-800">${t.step_upload}</h3>
+                                <p class="text-sm text-slate-500">Upload required documents</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            ${[
+                                { name: 'Applicant Photo', icon: 'image', color: 'blue', desc: 'Recent passport-size photo (JPG, PNG • Max 2MB)' },
+                                { name: 'Birth Certificate', icon: 'file-text', color: 'green', desc: 'Scanned copy or photo (PDF, JPG • Max 5MB)' },
+                                { name: 'Utility Bill', icon: 'receipt', color: 'purple', desc: 'For address proof (PDF, JPG • Max 3MB)' }
+                            ].map(doc => `
+                                <div class="glass border-2 border-dashed border-slate-300 rounded-2xl p-6 hover:border-${doc.color}-400 hover:bg-${doc.color}-50/30 transition-all cursor-pointer group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-${doc.color}-400 to-${doc.color}-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                                                <i data-lucide="${doc.icon}" class="w-7 h-7"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-lg text-slate-800">${doc.name}</p>
+                                                <p class="text-sm text-slate-500 mt-0.5">${doc.desc}</p>
+                                            </div>
+                                        </div>
+                                        <button class="px-6 py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all flex items-center gap-2 shadow-lg">
+                                            <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                                            <span>Browse</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="glass rounded-2xl p-6 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                            <div class="flex gap-4">
+                                <i data-lucide="info" class="w-6 h-6 text-green-600 shrink-0 mt-1"></i>
+                                <div class="text-sm text-green-800">
+                                    <p class="font-bold mb-1">Document Guidelines:</p>
+                                    <ul class="space-y-1 text-green-700">
+                                        <li>• All documents must be clear and readable</li>
+                                        <li>• Accepted formats: JPG, PNG, PDF</li>
+                                        <li>• File size limits as mentioned above</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="max-w-4xl mx-auto animate-slide-up">
+                    <div class="mb-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-4xl font-black text-slate-800">${t.nav_apply}</h2>
+                            <span class="text-sm font-bold text-slate-500">Step ${state.applyStep} of ${steps.length}</span>
+                        </div>
+
+                        <div class="relative flex justify-between items-center mb-4">
+                            <div class="step-line"></div>
+                            <div class="step-line-progress progress-bar" style="width: ${progressWidth}%"></div>
+                            
+                            ${steps.map((s, i) => {
+                                const stepNum = i + 1;
+                                const isActive = stepNum === state.applyStep;
+                                const isCompleted = stepNum < state.applyStep;
+                                
+                                return `
+                                    <div class="relative z-10 flex flex-col items-center bg-slate-50 px-3 py-2 rounded-2xl">
+                                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-base font-black border-3 transition-all duration-500 shadow-lg ${
+                                            isActive 
+                                                ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white border-green-400 scale-110 shadow-green-200' 
+                                                : isCompleted 
+                                                ? 'bg-green-100 text-green-600 border-green-300' 
+                                                : 'bg-white text-slate-400 border-slate-300'
+                                        }">
+                                            ${isCompleted ? '<i data-lucide="check" class="w-6 h-6"></i>' : stepNum}
+                                        </div>
+                                        <span class="text-xs mt-2 font-bold hidden sm:block ${isActive ? 'text-green-700' : isCompleted ? 'text-green-600' : 'text-slate-400'}">${s}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-3xl overflow-hidden border border-white/50 shadow-xl relative">
+                        ${state.isSubmitting ? `
+                            <div class="absolute inset-0 bg-white/95 backdrop-blur-md z-50 flex flex-col items-center justify-center animate-fade-in">
+                                <div class="relative">
+                                    <div class="w-24 h-24 border-8 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+                                    <i data-lucide="file-check" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 text-green-600"></i>
+                                </div>
+                                <p class="text-slate-800 font-bold text-xl mt-6">Submitting Your Application...</p>
+                                <p class="text-slate-500 text-sm mt-2">Please wait while we process your data</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="p-8 lg:p-12 min-h-[500px]">
+                            ${formContent}
+                        </div>
+
+                        <div class="flex justify-between p-8 pt-0">
+                            <button onclick="changeStep(-1)" ${state.applyStep === 1 ? 'disabled' : ''} class="px-8 py-4 text-slate-600 font-bold hover:bg-slate-100 rounded-2xl disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-3 transition-all hover:-translate-x-1">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                                <span>${t.btn_prev}</span>
+                            </button>
+                            
+                            ${state.applyStep < 4 ? `
+                                <button onclick="changeStep(1)" class="btn-ripple px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-green-200 flex items-center gap-3 transition-all hover:translate-x-1">
+                                    <span>${t.btn_next}</span>
+                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                </button>
+                            ` : `
+                                <button onclick="submitApplication()" class="btn-ripple px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold rounded-2xl hover:shadow-2xl flex items-center gap-3 transition-all hover:scale-105">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                    <span>${t.btn_submit}</span>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-center gap-2 text-sm text-slate-500">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span>Your information is encrypted and secure</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStatus() {
+            const t = getT();
+            return `
+                <div class="max-w-3xl mx-auto animate-slide-up">
+                    <div class="text-center mb-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl mb-6 shadow-xl">
+                            <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                                <path d="M11 8v6"/>
+                                <path d="M8 11h6"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-black text-slate-800 mb-4">${t.status_title}</h2>
+                        <p class="text-lg text-slate-600">${t.status_desc}</p>
+                    </div>
+
+                    <div class="glass rounded-3xl p-8 lg:p-12 border border-white/50 shadow-xl">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_app_id}</label>
+                                <div class="relative">
+                                    <i data-lucide="hash" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                    <input type="text" id="status-input" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none font-medium text-lg" placeholder="Enter Application ID (e.g., 2025-NID-1234)">
+                                </div>
+                            </div>
+
+                            <button onclick="checkStatus()" ${state.isTracking ? 'disabled' : ''} class="btn-ripple w-full py-5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-blue-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                                ${state.isTracking ? `
+                                    <div class="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Checking Status...</span>
+                                ` : `
+                                    <i data-lucide="search" class="w-6 h-6"></i>
+                                    <span>Track Application</span>
+                                `}
+                            </button>
+                        </div>
+
+                        ${state.statusResult ? `
+                            <div class="mt-8 animate-scale-in">
+                                <div class="glass rounded-2xl p-6 border ${state.statusResult === 'processing' ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50' : 'border-red-200 bg-gradient-to-r from-red-50 to-rose-50'}">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 ${state.statusResult === 'processing' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' : 'bg-gradient-to-br from-red-500 to-rose-500'} rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0">
+                                            <i data-lucide="${state.statusResult === 'processing' ? 'clock' : 'x-circle'}" class="w-8 h-8"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <h3 class="text-2xl font-bold ${state.statusResult === 'processing' ? 'text-blue-900' : 'text-red-900'} mb-2">
+                                                ${state.statusResult === 'processing' ? 'Application In Progress' : 'Application Rejected'}
+                                            </h3>
+                                            <p class="text-sm ${state.statusResult === 'processing' ? 'text-blue-700' : 'text-red-700'} mb-4">
+                                                ${state.statusResult === 'processing' 
+                                                    ? 'Your NID application is currently being processed by our team.' 
+                                                    : 'Your application has been rejected. Please contact support for details.'}
+                                            </p>
+                                            
+                                            ${state.statusResult === 'processing' ? `
+                                                <div class="space-y-3">
+                                                    ${[
+                                                        { label: 'Received', done: true },
+                                                        { label: 'Verification', done: true },
+                                                        { label: 'Approval', done: false },
+                                                        { label: 'Printing', done: false }
+                                                    ].map(step => `
+                                                        <div class="flex items-center gap-3">
+                                                            <div class="w-8 h-8 rounded-full ${step.done ? 'bg-green-500' : 'bg-slate-300'} flex items-center justify-center text-white">
+                                                                ${step.done ? '<i data-lucide="check" class="w-5 h-5"></i>' : '<i data-lucide="circle" class="w-3 h-3"></i>'}
+                                                            </div>
+                                                            <span class="font-semibold ${step.done ? 'text-green-700' : 'text-slate-500'}">${step.label}</span>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            ` : `
+                                                <button class="px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all flex items-center gap-2">
+                                                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                                                    <span>Contact Support</span>
+                                                </button>
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="mt-8 glass rounded-2xl p-6 border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                        <div class="flex gap-4">
+                            <i data-lucide="info" class="w-6 h-6 text-amber-600 shrink-0"></i>
+                            <div class="text-sm text-amber-900">
+                                <p class="font-bold mb-1">Need Help?</p>
+                                <p class="text-amber-800">If you face any issues, contact our support team at <span class="font-semibold">support@nid.gov.bd</span> or call <span class="font-semibold">16234</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDownload() {
+            const t = getT();
+            return `
+                <div class="max-w-3xl mx-auto animate-slide-up">
+                    <div class="text-center mb-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl mb-6 shadow-xl">
+                            <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-black text-slate-800 mb-4">${t.download_title}</h2>
+                        <p class="text-lg text-slate-600">Access your digital NID card instantly and securely</p>
+                    </div>
+
+                    <div class="glass rounded-3xl p-8 lg:p-12 border border-white/50 shadow-xl">
+                        ${!state.otpSent ? `
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_nid}</label>
+                                    <div class="relative">
+                                        <i data-lucide="credit-card" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                        <input type="text" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none font-medium text-lg" placeholder="Enter 10 or 17 digit NID">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_dob}</label>
+                                    <div class="relative">
+                                        <i data-lucide="calendar" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                        <input type="date" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none font-medium text-lg">
+                                    </div>
+                                </div>
+
+                                <button onclick="sendOtp()" ${state.isSendingOtp ? 'disabled' : ''} class="btn-ripple w-full py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-purple-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50">
+                                    ${state.isSendingOtp ? `
+                                        <div class="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Sending OTP...</span>
+                                    ` : `
+                                        <i data-lucide="send" class="w-6 h-6"></i>
+                                        <span>Send OTP</span>
+                                    `}
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="space-y-6 animate-scale-in">
+                                <div class="glass rounded-2xl p-6 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                            <i data-lucide="check" class="w-6 h-6"></i>
+                                        </div>
+                                        <p class="font-bold text-green-900">OTP Sent Successfully!</p>
+                                    </div>
+                                    <p class="text-sm text-green-700 ml-13">We've sent a verification code to your registered mobile number ending with <span class="font-bold">...432</span></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Enter OTP</label>
+                                    <div class="relative">
+                                        <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                        <input type="text" id="otp-input" maxlength="6" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none font-medium text-lg tracking-widest text-center" placeholder="000000">
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2 text-center">Demo OTP: <span class="font-bold text-purple-600">123456</span></p>
+                                </div>
+
+                                <button onclick="verifyOtp()" class="btn-ripple w-full py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-purple-200 transition-all flex items-center justify-center gap-3">
+                                    <i data-lucide="download" class="w-6 h-6"></i>
+                                    <span>Verify & Download</span>
+                                </button>
+
+                                <button onclick="state.otpSent = false; render();" class="w-full py-3 text-purple-600 font-semibold hover:bg-purple-50 rounded-xl transition-all flex items-center justify-center gap-2">
+                                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                    <span>Resend OTP</span>
+                                </button>
+                            </div>
+                        `}
+                    </div>
+
+                    <div class="mt-8 grid md:grid-cols-2 gap-6">
+                        <div class="glass rounded-2xl p-6 border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="smartphone" class="w-6 h-6 text-blue-600 shrink-0 mt-1"></i>
+                                <div class="text-sm">
+                                    <p class="font-bold text-blue-900 mb-1">Mobile Friendly</p>
+                                    <p class="text-blue-700">Download your NID as a PDF or save it directly to your phone</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass rounded-2xl p-6 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="shield-check" class="w-6 h-6 text-green-600 shrink-0 mt-1"></i>
+                                <div class="text-sm">
+                                    <p class="font-bold text-green-900 mb-1">Secure & Verified</p>
+                                    <p class="text-green-700">Your digital NID has QR code verification for authenticity</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVerify() {
+            const t = getT();
+            return `
+                <div class="max-w-3xl mx-auto animate-slide-up">
+                    <div class="text-center mb-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl mb-6 shadow-xl">
+                            <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-black text-slate-800 mb-4">${t.verify_title}</h2>
+                        <p class="text-lg text-slate-600">${t.verify_desc}</p>
+                    </div>
+
+                    <div class="glass rounded-3xl p-8 lg:p-12 border border-white/50 shadow-xl">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_nid}</label>
+                                <div class="relative">
+                                    <i data-lucide="credit-card" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                    <input type="text" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-amber-500 outline-none font-medium text-lg" placeholder="Enter NID Number">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${t.lbl_dob}</label>
+                                <div class="relative">
+                                    <i data-lucide="calendar" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"></i>
+                                    <input type="date" class="input-modern w-full pl-14 pr-4 py-5 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-amber-500 outline-none font-medium text-lg">
+                                </div>
+                            </div>
+
+                            <button onclick="verifyIdentity()" ${state.isVerifying ? 'disabled' : ''} class="btn-ripple w-full py-5 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-amber-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50">
+                                ${state.isVerifying ? `
+                                    <div class="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Verifying...</span>
+                                ` : `
+                                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                                    <span>Verify Identity</span>
+                                `}
+                            </button>
+                        </div>
+
+                        ${state.verifyResult ? `
+                            <div class="mt-8 animate-scale-in">
+                                ${state.verifyResult.status ? `
+                                    <div class="glass rounded-2xl p-6 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                                        <div class="flex items-start gap-4 mb-6">
+                                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0">
+                                                <i data-lucide="check-circle" class="w-8 h-8"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-2xl font-bold text-green-900 mb-1">Identity Verified</h3>
+                                                <p class="text-sm text-green-700">This NID card is authentic and valid</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-3">
+                                            <div class="flex items-center justify-between py-3 border-b border-green-200">
+                                                <span class="text-sm font-semibold text-green-800">Name:</span>
+                                                <span class="text-sm text-green-900 font-bold">${state.verifyResult.name}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3 border-b border-green-200">
+                                                <span class="text-sm font-semibold text-green-800">NID Number:</span>
+                                                <span class="text-sm text-green-900 font-bold">${state.verifyResult.nid}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3">
+                                                <span class="text-sm font-semibold text-green-800">Date of Birth:</span>
+                                                <span class="text-sm text-green-900 font-bold">${state.verifyResult.dob}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <div class="glass rounded-2xl p-6 border border-red-200 bg-gradient-to-r from-red-50 to-rose-50">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-500 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0">
+                                                <i data-lucide="x-circle" class="w-8 h-8"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-2xl font-bold text-red-900 mb-2">Verification Failed</h3>
+                                                <p class="text-sm text-red-700 mb-4">No matching record found in the database. Please verify the information and try again.</p>
+                                                <button class="px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all flex items-center gap-2">
+                                                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                                                    <span>Report Suspicious Activity</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="mt-8 glass rounded-2xl p-6 border border-red-200 bg-gradient-to-r from-red-50 to-rose-50">
+                        <div class="flex gap-4">
+                            <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600 shrink-0"></i>
+                            <div class="text-sm text-red-900">
+                                <p class="font-bold mb-1">Authorized Personnel Only</p>
+                                <p class="text-red-800">This feature is restricted to authorized government officials and verified organizations. Unauthorized access is punishable by law.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function render() {
+            let content = '';
+            
+            switch(state.view) {
+                case 'home': content = renderHome(); break;
+                case 'apply': content = renderApply(); break;
+                case 'status': content = renderStatus(); break;
+                case 'download': content = renderDownload(); break;
+                case 'verify': content = renderVerify(); break;
+                default: content = renderHome();
+            }
+            
+            document.getElementById('app-root').innerHTML = content;
+            renderNav();
+            lucide.createIcons();
+        }
+
+        render();
+    </script>
+</body>
+</html>
